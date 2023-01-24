@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 using namespace std;
@@ -13,15 +14,17 @@ public:
 	void readCost();
 	std::string showCost();
 	int showCount();
-	Cost computeCost(const Cost& cost_);
+	Cost computeCost(const vector<Cost> &cosVec);
+
+	void setCount(int count);
 };
 
 vector<Cost> costVec;
-int totalCount;
 
 int main() {
 
 	int amountToPurchase = 0;
+	int purchaseCount = 0;
 
 	cout << "Please enter the amount of items that you would like to purchase : ";
 	cin >> amountToPurchase;
@@ -30,9 +33,13 @@ int main() {
 	{
 		Cost itemCost;
 		itemCost.readCost();
+		purchaseCount++;
+		itemCost.setCount(purchaseCount);
+		costVec.push_back(itemCost);
 	}
 
-	cout << "Total Number of Items ordered: " << costVec[0].showCount() << endl;
+	cout << "\n\nTotal Number of Items ordered: " << costVec.back().showCount() << endl;
+	cout << "\nTotal Cost: " << costVec.back().computeCost(costVec).showCost() << endl;
 	
 
 	return 0;
@@ -45,23 +52,44 @@ void Cost::readCost()
 	cout << "Enter Cents : ";
 	cin >> cents_;
 
-	count_ = 1;
+	count_ += 1;
+}
+
+std::string Cost::showCost()
+{
+	
+	stringstream oss;
+	oss << "$" << dollar_ << "." << cents_;
+
+	return oss.str();
 }
 
 int Cost::showCount()
 {
-	for (size_t i = 0; i < costVec.size(); i++)
-	{
-		totalCount += costVec[i].count_;
-	}
-
-	return totalCount;
+	return count_;
 }
 
-Cost Cost::computeCost(const Cost& cost_)
+Cost Cost::computeCost(const vector<Cost> &cosVec)
 {
 	Cost totalCost;
 
+	for (size_t i = 0; i < cosVec.size(); i++)
+	{
+		totalCost.dollar_ += cosVec[i].dollar_;
+		totalCost.cents_ += cosVec[i].cents_;
+	}
+
+	if (totalCost.cents_ >= 100)
+	{
+		int result = (totalCost.cents_ / 100);
+		totalCost.dollar_ += result;
+		totalCost.cents_ -= (result*100);
+	}
+
 	return totalCost;
-	
+}
+
+void Cost::setCount(int count)
+{
+	count_ = count;
 }

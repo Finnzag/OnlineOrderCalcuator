@@ -7,24 +7,29 @@ using namespace std;
 class Cost
 {
 public:
-	Cost(){dollar_ = 0; cents_ = 0; count_ = 0;}
+	Cost() { dollar_ = 0; cents_ = 0;}
+	
 private:
-	int dollar_, cents_, count_;
+	int dollar_, cents_;
+	// Static integer for count so each Cost object shares the same count variable.
+	static int count_;
+
 public:
 	void readCost();
 	std::string showCost();
 	int showCount();
+	// using the const keyword so that the sata in the Vector cannot be changed via the refernce
+	// This function takes in a Cost vector and outputs a cost object. 
 	Cost computeCost(const vector<Cost> &cosVec);
-
-	void setCount(int count);
 };
 
 vector<Cost> costVec;
 
+int Cost::count_ = 0;
+
 int main() {
 
 	int amountToPurchase = 0;
-	int purchaseCount = 0;
 
 	cout << "Please enter the amount of items that you would like to purchase : ";
 	cin >> amountToPurchase;
@@ -33,8 +38,6 @@ int main() {
 	{
 		Cost itemCost;
 		itemCost.readCost();
-		purchaseCount++;
-		itemCost.setCount(purchaseCount);
 		costVec.push_back(itemCost);
 	}
 
@@ -52,7 +55,7 @@ void Cost::readCost()
 	cout << "Enter Cents : ";
 	cin >> cents_;
 
-	count_ += 1;
+	count_++;
 }
 
 std::string Cost::showCost()
@@ -87,9 +90,4 @@ Cost Cost::computeCost(const vector<Cost> &cosVec)
 	}
 
 	return totalCost;
-}
-
-void Cost::setCount(int count)
-{
-	count_ = count;
 }
